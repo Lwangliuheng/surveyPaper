@@ -12,6 +12,10 @@
     margin: 15px;
     border-radius: 15px;
   }
+  #scaleImg li img{
+    width:100px;
+    height:100px;
+  }
   #scaleImg span{
     font-size: 14px;
     width: 100%;
@@ -25,7 +29,6 @@
 </style>
 <template>
   <div style="background: #fff;">
-
     <!--pages/doubleroom/photoList/photoList.wxml-->
     <div class="body-view">
       <div class="listTitle">
@@ -61,6 +64,7 @@
       //获取照片信息
       this.licenseNo = this.$route.params.licenseNo
       this.recordsImg = JSON.parse(localStorage.getItem(this.licenseNo));
+      // console.log(localStorage.getItem(this.licenseNo),77777777777)
       this.$nextTick(() => {
         new Viewer(document.getElementById('scaleImg'), {
           url: 'data-src',

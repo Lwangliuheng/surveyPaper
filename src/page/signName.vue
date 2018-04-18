@@ -404,7 +404,7 @@ import axios from 'axios'
         axios.post(this.ajaxUrl+"/survey_single/v1/sign",formData)
           .then(response => {
             if(response.data.rescode == 200){
-               this.$router.push({path:'/'})
+               this.$router.push({path:'/'+this.$store.state.surveyNo})
             }else{
               this.$message({
                 message: '签名保存失败',
@@ -434,10 +434,10 @@ import axios from 'axios'
         var file = this.dataURLtoBlob(src);
         this.imgUrl.push(src);
         this.saveSignature(file);
-        if (!this.isPc()) {
-          // window.open(`data:text/plain,${src}`)
-          window.location.href = src
-        }
+        // if (!this.isPc()) {
+        //   // window.open(`data:text/plain,${src}`)
+        //   window.location.href = src
+        // }
       },
       // 设置绘画配置
       setCanvasStyle () {

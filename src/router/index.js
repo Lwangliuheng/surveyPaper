@@ -21,14 +21,14 @@ export default new Router({
       path:'/signName',
       component: signName,
     },
-    {
-      path: '/',
-      component: login
-    }
     // {
-    //   path: '/:num',
+    //   path: '/',
     //   component: login
     // }
+    {
+      path: '/:num',
+      component: login
+    }
   ]
 })
 

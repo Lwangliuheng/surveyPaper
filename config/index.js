@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/boot-xcx-survey-api/': {
-        // target:'http://192.168.1.27:10008',
+        //target:'http://192.168.1.27:10008',
         // target: 'http://192.168.1.140:8080',      // 志猛个人服务器
         //target: 'http://192.168.1.133:10008',      // 和鹏个人服务器
         // target: 'http://192.168.1.18:8080',//元鹏

@@ -528,7 +528,7 @@
         <span class="tableItemLeft">保险公司</span><span class="tableItemRight">{{targetVehicle.companyName}}</span>
       </div>
       <div class="tableItem mb10">
-        <span class="tableItemCenter" @click="gotolink('photoButton0',targetVehicle.licenseNo)" data-licenseNo="detailData.targetVehicle.licenseNo" id="">现场照片 ></span>
+        <span class="tableItemCenter" @click="gotolink('photoButton0',targetVehicle)" data-licenseNo="detailData.targetVehicle.licenseNo" id="">现场照片 ></span>
       </div>
       <!-- 三者车辆信息 -->
       <div  v-for='(item,index) in thirdPartyList'>
@@ -628,7 +628,7 @@
                   <img style="height:30px;width: 30px;" class="img flex" src="../images/greenCircle.png"/>
               </div>
               <div class="secondLineText flex-1">
-                  <span>三者车辆（{{targetVehicle.licenseNo}}）已确认收到保险车辆（{{plateNumber}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。</span>
+                  <span>三者车辆（{{plateNumber}}）已确认收到保险车辆（{{targetVehicle.licenseNo}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。</span>
               </div>
           </div>
           <div class="signShowBox">
@@ -754,7 +754,7 @@
                 type: 'error'
               });
           }else{
-            localStorage.setItem('licenseNo',JSON.stringify(item.photoList));
+            localStorage.setItem(licenseNo,JSON.stringify(item.photoList));
             this.$router.push({path:'/photoList/'+licenseNo});
           }
         }else{
@@ -765,7 +765,7 @@
                 type: 'error'
               });
           }else{
-            localStorage.setItem('licenseNo',JSON.stringify(item.detailPhotoList));
+            localStorage.setItem(licenseNo,JSON.stringify(item.detailPhotoList));
             this.$router.push({path:'/photoList/'+licenseNo});
           }
         }
@@ -785,7 +785,7 @@
          var zarr = ["正前部","左前部","右前部","左中部","正后部","左后部","右后部","右中部"];
          var barr = [];
          for(var i = 0; i < arr.length;i++){
-            barr.push(zarr[arr[i]])
+            barr.push(zarr[arr[i]-1])
          };
          return barr
       },
@@ -798,19 +798,21 @@
              plateNumber += obj[i].licenseNo;
              claimMoney += obj[i].claimAmount;
          };
-         this.plateNumber = plateNumber;//车拍
+         this.plateNumber = plateNumber;//车牌
          this.claimMoney = claimMoney;//理赔金
          this.claimInfo = obj //理赔信息集合
+         // console.log(obj,44444444444)
       },
       getDetailData(){
         var surveyNo = this.$route.params.num
+        // console.log(surveyNo,6666666666666)
         var paramData = {
-          'num': 'd9b35e1f8dc440619a37d7014074afc5'
+          'num': surveyNo
         }
-        this.$store.commit('setSurveyNoActive','d9b35e1f8dc440619a37d7014074afc5');
+        this.$store.commit('setSurveyNoActive',surveyNo);
         axios.post(this.ajaxUrl+"/survey_single/v1/query",paramData)
           .then(response => {
-            console.log(response,77777777777777)
+            // console.log(response,77777777777777)
             if(response.status == 200){
               this.detailData = response.data.detail;//基本信息
               this.targetVehicle = response.data.targetVehicle;//标的车信息
@@ -823,7 +825,7 @@
               this.signImgUrl = response.data.surveySingle.signUrl;
               // this.agreeThird = 3 ;
               this.agreeThird = response.data.surveySingle.type;
-              if(!this.lossState){
+              if(this.lossState){
                 this.changeLossList(response.data.surveySingle.claimInfo);
               }
               
