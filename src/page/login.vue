@@ -470,7 +470,7 @@
     top:0px;
     left:150px;
     text-align: center;
-    line-height: 60px;
+    line-height: 28px;
   }
   .signature-wrap{
     overflow: hidden;
@@ -486,6 +486,9 @@
   .signature-content p{
      text-indent:20px;
      padding-bottom:20px;
+  }
+  .sq{
+    margin-bottom:10px;
   }
 </style>
 <template>
@@ -559,7 +562,7 @@
           <div class="textItem2">
              <span>损伤情况</span>
           </div>
-          <div v-for="item in claimInfo">
+          <div v-for="item in claimInfo" class ="sq">
               <div class="tableItem bbn">
                 <span class="loss-text">{{item.licenseNo}}</span>
               </div>
@@ -569,7 +572,7 @@
                         <li class="tableItem-left-li">{{value}}</li>
                       </ul>
                       <div class="tableItem-right">
-                        {{item.claimAmount}}
+                        赔付金额：{{item.claimAmount}}￥
                       </div>
                   </div>
                   
@@ -595,7 +598,7 @@
              </p>
           </div>
           <div class="signedShowBox">
-              <span>签字：</span>
+              <!-- <span>签字：</span> -->
             <img  class="signImg" :src="signImgUrl">
           </div>
           <!-- <div class="signature-wrap">
@@ -628,7 +631,7 @@
                   <img style="height:30px;width: 30px;" class="img flex" src="../images/greenCircle.png"/>
               </div>
               <div class="secondLineText flex-1">
-                  <span>三者车辆（{{plateNumber}}）已确认收到保险车辆（{{targetVehicle.licenseNo}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。</span>
+                  <span>三者车辆（{{targetVehicle.licenseNo}}）已确认收到保险车辆（{{plateNumber}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。</span>
               </div>
           </div>
           <div class="signShowBox">
@@ -758,14 +761,15 @@
             this.$router.push({path:'/photoList/'+licenseNo});
           }
         }else{
-          idStr = Number(idStr)-1;
-          if(this.thirdPartyList[idStr].photoList.length == 0){
+           console.log(item,444444444444)
+          if(item.photoList.length == 0){
              this.$message({
                 message: '此车暂无照片',
                 type: 'error'
               });
           }else{
-            localStorage.setItem(licenseNo,JSON.stringify(item.detailPhotoList));
+            console.log(item.detailPhotoList,66666666)
+            localStorage.setItem(licenseNo,JSON.stringify(item.photoList));
             this.$router.push({path:'/photoList/'+licenseNo});
           }
         }
@@ -795,8 +799,11 @@
         var claimMoney = 0;
          for(var i = 0; i < obj.length;i++){
              obj[i].damagedPart = this.getLossList(obj[i].damagedPart);
-             plateNumber += obj[i].licenseNo;
-             claimMoney += obj[i].claimAmount;
+             if(obj[i].licenseNo != this.targetVehicle.licenseNo){
+                plateNumber += obj[i].licenseNo;
+                claimMoney += obj[i].claimAmount+"￥,";
+             }
+             
          };
          this.plateNumber = plateNumber;//车牌
          this.claimMoney = claimMoney;//理赔金
@@ -804,8 +811,9 @@
          // console.log(obj,44444444444)
       },
       getDetailData(){
-        var surveyNo = this.$route.params.num
-        // console.log(surveyNo,6666666666666)
+        var surveyNo = this.$route.query.num
+        //alert(this.$route.query.num)
+        console.log(surveyNo,6666666666666)
         var paramData = {
           'num': surveyNo
         }

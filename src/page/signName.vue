@@ -400,11 +400,11 @@ import axios from 'axios'
             formData.append("num",this.$store.state.surveyNo);
             formData.append("signPhoto", url);
         //this.$router.push({path:'/'})
-        //console.log(paramData,66666666666)
+        //console.log(paramData,66666666666)surveyPaper/?num=493d097a72ac4b4cac80553e9dd8334f
         axios.post(this.ajaxUrl+"/survey_single/v1/sign",formData)
           .then(response => {
             if(response.data.rescode == 200){
-               this.$router.push({path:'/'+this.$store.state.surveyNo})
+               this.$router.push({path:'/surveyPaper/?num='+this.$store.state.surveyNo})
             }else{
               this.$message({
                 message: '签名保存失败',
