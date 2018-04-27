@@ -7,17 +7,17 @@ const path = require('path');
 http://192.168.1.27:10008/boot-pub-survey-video/survey_single/v1/query/boot-xcx-survey-api
 module.exports = {
   dev: {
-    // Paths
+    // Paths/boot-pub-survey-video/survey_single/v1/query
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/boot-xcx-survey-api/': {
+      '/boot-pub-survey-video': {
         //target:'http://192.168.1.27:10008',
         // target: 'http://192.168.1.140:8080',      // 志猛个人服务器
         //target: 'http://192.168.1.133:10008',      // 和鹏个人服务器
         // target: 'http://192.168.1.18:8080',//元鹏
-        // target: 'https://chakan.zhongchebaolian.com', // 生产
-        target: 'https://survey.zhongchebaolian.com', // 测试
+        target: 'https://chakan.zhongchebaolian.com', // 生产
+        //target: 'https://survey.zhongchebaolian.com', // 测试
         changeOrigin: true,
         pathRewrite: {
           '^/boot-pub-survey-video': '/boot-pub-survey-video'

@@ -572,7 +572,7 @@
                         <li class="tableItem-left-li">{{value}}</li>
                       </ul>
                       <div class="tableItem-right">
-                        赔付金额：{{item.claimAmount}}￥
+                        赔付金额：￥{{item.claimAmount}}
                       </div>
                   </div>
                   
@@ -593,8 +593,8 @@
              <p v-if="agreeThird == 2">
                被保险人同意由保险公司将此次事故造成三者车辆损失的赔款直接转至三者车提供的账户内。
              </p>
-             <p v-if="agreeThird == 3">
-               三者车辆（{{targetVehicle.licenseNo}}）已确认收到保险车辆（{{plateNumber}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。
+             <p v-if="agreeThird == 3 && thirdPartyListState">
+               三者车辆（{{plateNumber}}）已确认收到保险车辆（{{targetVehicle.licenseNo}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。
              </p>
           </div>
           <div class="signedShowBox">
@@ -626,12 +626,12 @@
                   <span>被保险人同意由保险公司将此次事故造成三者车辆损失的赔款直接转至三者车提供的账户内。</span>
               </div>
           </div>
-          <div class="secondLine flex" v-if="agreeThird == 3">
+          <div class="secondLine flex" v-if="agreeThird == 3 && thirdPartyListState">
               <div class="imgDiv flex">
                   <img style="height:30px;width: 30px;" class="img flex" src="../images/greenCircle.png"/>
               </div>
               <div class="secondLineText flex-1">
-                  <span>三者车辆（{{targetVehicle.licenseNo}}）已确认收到保险车辆（{{plateNumber}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。</span>
+                  <span>三者车辆（{{plateNumber}}）已确认收到保险车辆（{{targetVehicle.licenseNo}}）赔偿款（{{claimMoney}}）元，并承诺后期不在追究对方及对方保险公司的赔偿责任。</span>
               </div>
           </div>
           <div class="signShowBox">
@@ -682,6 +682,7 @@
   export default {
     data() {
       return {
+        thirdPartyListState:false,
         plateNumber:"",
         claimMoney:"",
         src:"",
@@ -796,12 +797,13 @@
       changeLossList(obj){
         //var obj = [{damagedPart:"1-2-3-4-5-6-7",licenseNo:"1",claimAmount:10},{damagedPart:"1-2-3-4-5-6-7",licenseNo:"1",claimAmount:10}]
         var plateNumber = "";
-        var claimMoney = 0;
+        var claimMoney = "";
          for(var i = 0; i < obj.length;i++){
              obj[i].damagedPart = this.getLossList(obj[i].damagedPart);
              if(obj[i].licenseNo != this.targetVehicle.licenseNo){
                 plateNumber += obj[i].licenseNo;
-                claimMoney += obj[i].claimAmount+"￥,";
+                claimMoney += "￥" + obj[i].claimAmount;
+                // console.log(claimMoney)
              }
              
          };
@@ -826,7 +828,11 @@
               this.targetVehicle = response.data.targetVehicle;//标的车信息
               this.detailPhotoList = response.data.targetVehicle.photoList;//标的车图片列表
               this.thirdPartyList = response.data.thirdPartyList;//第三方车辆信息
-
+              if(this.thirdPartyList.length == 0){
+                   this.thirdPartyListState =  false;
+              }else{
+                  this.thirdPartyListState =  true;
+              }
               this.lossState = response.data.surveySingle.claimInfo ? true:false;
               this.signStatus = response.data.surveySingle.status;
               // this.signStatus = 0
