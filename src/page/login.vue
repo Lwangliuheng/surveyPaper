@@ -655,7 +655,7 @@
           <span>1、前往就近或熟悉的修理厂（4s店）进行定损</span>
         </div>
         <div class="textItem3">
-          <span>2、定损时拨打保险公司电话</span><span class="red">40001-88688</span><span>进行定损咨询</span>
+          <span>2、定损时拨打保险公司电话</span><span class="red"> {{phoneData[targetVehicle.companyName]}} </span><span>进行定损咨询</span>
         </div>
         <div class="textItem3">
           <span>3、确定事故损失后，出具机动车辆保险车辆损失情况确认书等索赔材料</span>
@@ -667,10 +667,9 @@
           <span>5、我司完成材料审核后，支付赔款。并在支付赔款后，进行通知及回访</span>
         </div>
         <div class="textItem3">
-          <span>如有疑问可拨打：</span><span class="red">40001-88688</span><span>进行咨询</span>
+          <span>如有疑问可拨打：</span><span class="red"> {{phoneData[targetVehicle.companyName]}} </span><span>进行咨询</span>
         </div>
       </div>
-
     </div>
 
   </div>
@@ -679,9 +678,11 @@
 <script>
 
   import axios from 'axios'
+  import phoneData from '../js/phoneData.js'
   export default {
     data() {
       return {
+        phoneData:phoneData,
         thirdPartyListState:false,
         plateNumber:"",
         claimMoney:"",
@@ -727,6 +728,7 @@
     },
     created(){
       this.getDetailData();
+      console.log(phoneData)
     },
     mounted() {
     },
@@ -826,6 +828,7 @@
             if(response.status == 200){
               this.detailData = response.data.detail;//基本信息
               this.targetVehicle = response.data.targetVehicle;//标的车信息
+              console.log(this.targetVehicle,"标的车信息")
               this.detailPhotoList = response.data.targetVehicle.photoList;//标的车图片列表
               this.thirdPartyList = response.data.thirdPartyList;//第三方车辆信息
               if(this.thirdPartyList.length == 0){
