@@ -200,6 +200,7 @@
   }
   .bottomInfo{
     padding:0 13px 44px 34px;
+    font-size:13px;
   }
   .textItem3{
     line-height:22px;
@@ -490,6 +491,12 @@
   .sq{
     margin-bottom:10px;
   }
+  .show{
+    display:block;
+  }
+  .hide{
+    display:none;
+  }
 </style>
 <template>
   <div style="background: #fff;">
@@ -549,14 +556,14 @@
         </div>
       </div>
       <!--事故经过-->
-      <!-- <div class="loss-situation">
+      <div class="loss-situation">
           <div class="textItem2">
              <span>事故经过</span>
           </div>
           <div class="signBox">
-                999999999999999999
+                {{detailData.descripe}}
           </div>
-      </div> -->
+      </div>
       <!--损伤情况-->
       <div class="loss-situation"  v-if="lossState">
           <div class="textItem2">
@@ -650,7 +657,11 @@
         <span class="bottomTitleText">理赔流程</span>
       </div>
 
-      <div class="bottomInfo">
+      <div class="bottomInfo bottomInfoTe">
+     
+      </div>
+
+       <div class="bottomInfo bottomInfoTeone">
         <div class="textItem3">
           <span>1、前往就近或熟悉的修理厂（4s店）进行定损</span>
         </div>
@@ -682,6 +693,8 @@
   export default {
     data() {
       return {
+        content:"",//理赔信息
+        contentState:false,
         phoneData:phoneData,
         thirdPartyListState:false,
         plateNumber:"",
@@ -826,9 +839,21 @@
           .then(response => {
             // console.log(response,77777777777777)
             if(response.status == 200){
+               // 理赔指引
+              this.content =  response.data.claimsGuidelines;//理赔信息
+              if(!this.content){
+                 this.contentState = true;
+                 $(".bottomInfoTeone").removeClass("hide");
+                 $(".bottomInfoTe").addClass("hide");
+              }else{
+                this.contentState = false;
+                $(".bottomInfoTeone").addClass("hide");
+                $(".bottomInfoTe").removeClass("hide");
+              };
+              $(".bottomInfoTe").html(this.content);
               this.detailData = response.data.detail;//基本信息
               this.targetVehicle = response.data.targetVehicle;//标的车信息
-              console.log(this.targetVehicle,"标的车信息")
+              console.log(response.data,"标的车信息")
               this.detailPhotoList = response.data.targetVehicle.photoList;//标的车图片列表
               this.thirdPartyList = response.data.thirdPartyList;//第三方车辆信息
               if(this.thirdPartyList.length == 0){
