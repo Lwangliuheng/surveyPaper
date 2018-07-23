@@ -497,10 +497,85 @@
   .hide{
     display:none;
   }
+
+  .avatar-uploader{
+        margin:0 auto;
+       margin-bottom:10px;
+   }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    line-height: 100px;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+  }
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
+  .upload_tu{
+    margin-top:20px;
+    padding:10px;
+    border: 1px solid #2eab3b;
+    overflow: hidden;
+    margin-bottom:40px;
+  }
+  
+  .isIos_wrap{
+    margin-right:4px;
+    float:left;
+  }
+  .isIos_wrap_te{
+    margin-right:0px;
+    float:left;
+  }
+  .upload_tu p{
+     width: 100px;
+    text-align: center;
+  }
+  .input_box{
+    width:100px;
+    height:100px;
+    border:1px dashed #d9d9d9;
+  }
+  .file_box{
+    position:absolute;
+    left:-1000000px;
+  }
+  .tj{
+    width:80%;
+    margin:0 auto;
+    height:50px;
+    line-height: 50px;
+    text-align: center;
+    color:#fff;
+    background-color: #096fd4;
+    border-radius: 4px;
+    margin-top:30px;
+    margin-bottom:10px;
+  }
+  .gay{
+    background-color: #999999;
+  }
+  .success_wrod{
+     padding-top:10px;
+     text-align: center;
+     color:#999999;
+  }
 </style>
 <template>
- <div>
-  <div style="background: #fff;" v-if="!personHurtStatus">
+  <div style="background: #fff;">
 
     <!--<div class="body-view {{showSignFlag?'oh':''}}">-->
     <div class="body-view">
@@ -539,7 +614,7 @@
         <span class="tableItemLeft">保险公司</span><span class="tableItemRight">{{targetVehicle.companyName}}</span>
       </div>
       <div class="tableItem mb10" >
-        <span class="tableItemCenter" v-if="curDetail.targetFlag == 1 || curDetail.licenseNo == targetVehicle.licenseNo" @click="gotolink('photoButton0',targetVehicle)" data-licenseNo="detailData.targetVehicle.licenseNo" id="" >现场照片 ></span>
+       <!--  <span class="tableItemCenter" v-if="curDetail.targetFlag == 1 || curDetail.licenseNo == targetVehicle.licenseNo" @click="gotolink('photoButton0',targetVehicle)" data-licenseNo="detailData.targetVehicle.licenseNo" id="" >现场照片 ></span> -->
       </div>
       <!-- 三者车辆信息 -->
       <div  v-for='(item,index) in thirdPartyList'>
@@ -553,7 +628,7 @@
           <span class="tableItemLeft">联系方式</span><span class="tableItemRight">{{item.phone}}</span>
         </div>
         <div class="tableItem mb10">
-          <span class="tableItemCenter" v-if="curDetail.targetFlag == 1 || curDetail.licenseNo == item.licenseNo" data-licenseNo="item.licenseNo" @click="gotolink('photoButton'+index+1,item)" >现场照片 ></span>
+         <!--  <span class="tableItemCenter" v-if="curDetail.targetFlag == 1 || curDetail.licenseNo == item.licenseNo" data-licenseNo="item.licenseNo" @click="gotolink('photoButton'+index+1,item)" >现场照片 ></span> -->
         </div>
       </div>
       <!--事故经过-->
@@ -650,18 +725,68 @@
             <img  class="signImg" :src="signImgUrl">
           </div> -->
       </div>
-      <img class="dashImg2" style="width:100%;height:2px;" src="../images/dashline.png" />
+      <div class="upload_tu">
+        <!-- <div class="isIos_wrap_te">
+          <el-upload
+            name="bankCardPhoto"
+            :data="szDtata"
+            class="avatar-uploader"
+            action="/boot-pub-survey-video/smallclaim/v1/sign"
+            :show-file-list="false"
+            :on-success="yhhandleAvatarSuccess"
+            :before-upload="szbeforeAvatarUpload">
+            <img v-if="yhimageUrl" :src="yhimageUrl" class="avatar" >
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+          <p class="top_wrod">银行卡</p>
+        </div> -->
 
-      <div class="bottomTitleView">
+        <div style="overflow:hidden;" v-if="!upStatus">
+           <div class="isIos_wrap">
+               <div class="input_box" @click="upImg('file_box_sz')">
+               <img v-if="szimageUrl" :src="szimageUrl" class="avatar" >
+               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+               </div>
+               <input type="file" name="" class="file_box file_box_sz" @change="showPreview($event,1)"> 
+               <p class="top_wrod">身份证(正面)</p>
+           </div>
+           <div class="isIos_wrap">
+               <div class="input_box" @click="upImg('file_box_sf')">
+               <img v-if="sfimageUrl" :src="sfimageUrl" class="avatar" >
+               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+               </div>
+               <input type="file" name="" class="file_box file_box_sf" @change="showPreview($event,2)"> 
+               <p class="top_wrod">身份证(反面)</p>
+           </div>
+           <div class="isIos_wrap_te">
+               <div class="input_box" @click="upImg('file_box_yh')">
+               <img v-if="yhimageUrl" :src="yhimageUrl" class="avatar" >
+               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+               </div>
+               <input type="file" name="" class="file_box file_box_yh" @change="showPreview($event,3)"> 
+               <p class="top_wrod">银行卡</p>
+           </div>
+        </div>
+        <div class="success_wrod" v-if="upStatus">
+           身份证(正面)，身份证(反面)，银行卡已经保存完成！
+         </div>
+         <div class="tj" v-bind:class="{ gay: upStatus }" @click="upZlImg">
+            提交
+         </div>
+         
+      </div>
+     <!--  <img class="dashImg2" style="width:100%;height:2px;" src="../images/dashline.png" /> -->
+
+      <!-- <div class="bottomTitleView">
         <img class="bottomTitleBg" src="../images/titlebg.png" >
         <span class="bottomTitleText">理赔流程</span>
-      </div>
+      </div> -->
 
-      <div class="bottomInfo bottomInfoTe">
+     <!--  <div class="bottomInfo bottomInfoTe">
      
-      </div>
+      </div> -->
 
-       <div class="bottomInfo bottomInfoTeone">
+  <!--      <div class="bottomInfo bottomInfoTeone">
         <div class="textItem3">
           <span>1、前往就近或熟悉的修理厂（4s店）进行定损</span>
         </div>
@@ -680,26 +805,27 @@
         <div class="textItem3">
           <span>如有疑问可拨打：</span><span class="red"> {{phoneData[targetVehicle.companyName]}} </span><span>进行咨询</span>
         </div>
-      </div>
+      </div> -->
     </div>
-      
+    
   </div>
-
-  <person-logon v-if="personHurtStatus"></person-logon>
- </div>
 </template>
 
 <script>
 
   import axios from 'axios'
   import phoneData from '../js/phoneData.js'
-  import personLogon from '../components/personLogon'
   export default {
     data() {
       return {
-        personHurtStatus:true,
-
-
+        upStatus:false,
+        szDtata:{
+          num:localStorage.getItem("num"),
+          isTarget:1
+        },
+        yhimageUrl:"",
+        sfimageUrl:"",
+        szimageUrl:"",
         curDetail:"",//照片
         content:"",//理赔信息
         contentState:false,
@@ -748,20 +874,117 @@
       }
     },
     created(){
+      var surveyNo = this.$route.query.num;
+      localStorage.setItem("num",surveyNo)
       this.getDetailData();
       console.log(phoneData)
     },
     mounted() {
-
     },
     watch: {
 
     },
     methods: {
+      upZlImg(){
+        if(this.upStatus){
+            return
+        };
+        if(!this.szimageUrl){
+           this.$message({
+                message: '请选择身份证正面照片',
+                type: 'error'
+              });
+           return
+        }
+        if(!this.sfimageUrl){
+           this.$message({
+                message: '请选择身份证反面照片',
+                type: 'error'
+              });
+           return
+        }
+         if(!this.yhimageUrl){
+           this.$message({
+                message: '请选择银行卡照片',
+                type: 'error'
+              });
+           return
+        }
+        var data = {
+                      num:localStorage.getItem("num"),
+                      idCardFrontPhoto:this.szimageUrl,
+                      idCardBackPhoto:this.sfimageUrl,
+                      bankCardPhoto:this.yhimageUrl
 
+                     }
+          axios.post(this.ajaxUrl+'/small_claim/v1/savePhoto',data)
+          .then(response => {
+            if(response.data.rescode == 200){
+              this.upStatus = true;
+              this.$message({
+                message: '资料保存成功',
+                type: 'success'
+              });
+               //this.$router.push({path:'/small/?num='+this.$store.state.surveyNo})
+            }else{
+              this.$message({
+                message: '资料保存失败',
+                type: 'error'
+              });
+            }
+          }, err => {
+            console.log(err);
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      },
+      showPreview(e,type){
+        var file = e.target.files[0];
+         var that = this;
+         if(window.FileReader) {    
+                var reader = new FileReader(); 
+                var bas = reader.readAsDataURL(file);   
+                reader.onloadend = function (e) {
+                  console.log(e.target.result);
+                  if(type == 1){
+                     that.szimageUrl = e.target.result;
+                     // var data = {
+                     //  num:that.$route.query.num,
+                     //  isTarget:true,
+                     //  idCardFrontPhoto:e.target.result
+                     // }
+                     //  that.upZlImg(data);
+                  };
+                  if(type == 2){
+                     that.sfimageUrl = e.target.result;
+                     // var data = {
+                     //  num:that.$route.query.num,
+                     //  isTarget:true,
+                     //  idCardBackPhoto:e.target.result
+                     // }
+                     //  that.upZlImg(data);
+                  };
+                  if(type == 3){
+                     that.yhimageUrl = e.target.result;
+                     // var data = {
+                     //  num:that.$route.query.num,
+                     //  isTarget:true,
+                     //  bankCardPhoto:e.target.result
+                     // }
+                     //  that.upZlImg(data);
+                  };
+                  //$(".img").attr("src",e.target.result);    //e.target.result就是最后的路径地址
+                  };    
+             } 
+
+      },
+      upImg(str){
+        $('.'+str).trigger("click");
+      },
       showSignDiv(){
-        // this.$router.push({path:'/signName'})
-        this.$router.push({path:'/signName',params:{key:0}});
+        this.$router.push({path:'/signName',query:{key:1}});
+
       },
       changeAgreeThird(){
         if(this.agreeThird == 0){
@@ -837,38 +1060,39 @@
          // console.log(obj,44444444444)
       },
       getDetailData(){
-        var surveyNo = this.$route.query.num;
-        //alert(this.$route.query.num)
+        var surveyNo = localStorage.getItem("num");
+        //var surveyNo = 'bf633a50097b4bfa894d8ea652b0e99b';
+        //alert(localStorage.getItem("num"))
         console.log(surveyNo,6666666666666)
         var paramData = {
           'num': surveyNo
         }
         this.$store.commit('setSurveyNoActive',surveyNo);
-        axios.post(this.ajaxUrl+"/survey_single/v1/query",paramData)
+        axios.post(this.ajaxUrl+'/small_claim/v1/query',paramData)
           .then(response => {
             // console.log(response,77777777777777)
             if(response.status == 200){
-               // 理赔指引
-              this.content =  response.data.claimsGuidelines;//理赔信息
-              if(!this.content){
-                 this.contentState = true;
-                 $(".bottomInfoTeone").removeClass("hide");
-                 $(".bottomInfoTe").addClass("hide");
-              }else{
-                this.contentState = false;
-                $(".bottomInfoTeone").addClass("hide");
-                $(".bottomInfoTe").removeClass("hide");
-                this.content = this.content.replace(/#phone#/g,phoneData[response.data.targetVehicle.companyName]);
-                console.log(this.content,"111111111111")
-                $(".bottomInfoTe").html(this.content);
-              };
-              
-             
-              console.log(response.data.curDetail,"照片")
+
+              //  // 理赔指引
+              // this.content =  response.data.claimsGuidelines;//理赔信息
+              // if(!this.content){
+              //    this.contentState = true;
+              //    $(".bottomInfoTeone").removeClass("hide");
+              //    $(".bottomInfoTe").addClass("hide");
+              // }else{
+              //   this.contentState = false;
+              //   $(".bottomInfoTeone").addClass("hide");
+              //   $(".bottomInfoTe").removeClass("hide");
+              // };
+              // this.content = this.content.replace(/#phone#/g,phoneData[response.data.targetVehicle.companyName]);
+              // console.log(this.content,"111111111111")
+              // $(".bottomInfoTe").html(this.content);
+              // console.log(response.data.curDetail,"照片")
               //
-              this.curDetail = response.data.curDetail;//照片
+              // this.curDetail = response.data.curDetail;//照片
               //
               this.detailData = response.data.detail;//基本信息
+              console.log(this.detailData,4566)
               this.targetVehicle = response.data.targetVehicle;//标的车信息
               console.log(response.data,"标的车信息")
               this.detailPhotoList = response.data.targetVehicle.photoList;//标的车图片列表
@@ -878,14 +1102,14 @@
               }else{
                   this.thirdPartyListState =  true;
               }
-              this.lossState = response.data.surveySingle.claimInfo ? true:false;
-              this.signStatus = response.data.surveySingle.status;
+              this.lossState = response.data.smallClaim.claimInfo ? true:false;
+              this.signStatus = response.data.smallClaim.status;
               // this.signStatus = 0
-              this.signImgUrl = response.data.surveySingle.signUrl;
+              this.signImgUrl = response.data.smallClaim.signUrl;
               // this.agreeThird = 3 ;
-              this.agreeThird = response.data.surveySingle.type;
+              this.agreeThird = response.data.smallClaim.type;
               if(this.lossState){
-                this.changeLossList(response.data.surveySingle.claimInfo);
+                this.changeLossList(response.data.smallClaim.claimInfo);
               }
               
             }
@@ -898,7 +1122,6 @@
       },
     },
     components: {
-      personLogon,
     },
   };
 </script>

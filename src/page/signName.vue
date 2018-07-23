@@ -218,6 +218,8 @@ import axios from 'axios'
   export default {
     data () {
       return {
+        type:0,
+        upStatus:false,
         colors: ['#fef4ac', '#0018ba', '#ffc200', '#f32f15', '#cccccc', '#5ab639'],
         brushs: [{
           className: 'small fa fa-paint-brush',
@@ -247,9 +249,13 @@ import axios from 'axios'
       }
     },
     created () {
+      document.ontouchmove = function(){
+          return false;
+      };
       this.$emit('setNav', '在线涂鸦画板')
     },
     mounted () {
+      this.type = this.$route.query.key;
       const canvas = document.querySelector('#canvas')
       this.context = canvas.getContext('2d')
       this.initDraw()
@@ -325,7 +331,8 @@ import axios from 'axios'
       },
       // mouseup
       canvasUp (e) {
-        console.log('canvasUp')
+        this.upStatus = true;
+        //console.log('canvasUp')
         const preData = this.context.getImageData(0, 0, 600, 400)
         if (!this.nextDrawAry.length) {
           // 当前绘图表面进栈
@@ -357,6 +364,8 @@ import axios from 'axios'
         this.preDrawAry.push(preData)
       },
       clear(){
+         // alert(222222222)
+        this.upStatus =  false;
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
         this.preDrawAry = []
         this.nextDrawAry = []
@@ -393,14 +402,46 @@ import axios from 'axios'
             break
         }
       },
+      //小额
+      getSmallData(data){
+        axios.post(this.ajaxUrl+'/small_claim/v1/sign',data)
+          .then(response => {
+            if(response.data.rescode == 200){
+               this.$router.push({path:'/small/?num='+this.$store.state.surveyNo+'&key=0'})
+            }else{
+              this.$message({
+                message: '签名保存失败',
+                type: 'error'
+              });
+            }
+          }, err => {
+            console.log(err);
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      },
+      smallsSaveSignature(url){
+        // alert(this.$store.state.surveyNo)
+        var smallData = {
+           num:this.$store.state.surveyNo,
+           isTarget:1,
+           signPhoto:url
+        };
+            this.getSmallData(smallData);
+
+      },
       saveSignature(url){
-         // console.log(url,"woshilujing11111111111111111")
+         console.log(url,"woshilujing11111111111111111")
          console.log(this.$store.state.surveyNo,"2222222222222")
         var formData = new FormData();
             formData.append("num",this.$store.state.surveyNo);
             formData.append("signPhoto", url);
-        //this.$router.push({path:'/'})
-        //console.log(paramData,66666666666)surveyPaper/?num=493d097a72ac4b4cac80553e9dd8334f
+          if(this.type == 1){
+            formData.append("isTarget", 1);
+             this.getSmallData(formData);
+             return
+          };
         axios.post(this.ajaxUrl+"/survey_single/v1/sign",formData)
           .then(response => {
             if(response.data.rescode == 200){
@@ -432,8 +473,22 @@ import axios from 'axios'
         const src = canvas.toDataURL('image/png')
         // console.log(src);
         var file = this.dataURLtoBlob(src);
+       // console.log(file);
         this.imgUrl.push(src);
-        this.saveSignature(file);
+         // console.log(src)
+         //alert(this.upStatus)
+        if(this.upStatus){
+          //alert(this.upStatus)
+          // if(this.type == 1){
+          //    this.smallsSaveSignature(src);
+          // }else{
+          //    this.saveSignature(file);
+          // }
+           this.saveSignature(file);
+        }else{
+          this.$message.error("请签名！");
+        };
+        
         // if (!this.isPc()) {
         //   // window.open(`data:text/plain,${src}`)
         //   window.location.href = src

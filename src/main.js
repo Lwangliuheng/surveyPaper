@@ -29,7 +29,7 @@ axios.interceptors.request.use(config => {
 if(config.url == '/boot-xcx-survey-api//survey_single/v1/query'){
   loadinginstace = ElementUI.Loading.service({ fullscreen: true })
 }
-if(config.url == '/boot-xcx-survey-api//survey_single/v1/sign'){
+if(config.url == '/boot-pub-survey-video/survey_single/v1/sign'){
   loadinginstace = ElementUI.Loading.service({ fullscreen: true })
 }
 if(config.url == '/boot-pub-survey-manage/pub/survey/v1/action'){
